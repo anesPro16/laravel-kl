@@ -1,0 +1,78 @@
+* text=auto eol=lf
+*.blade.php diff=html
+*.css diff=css
+*.html diff=html
+*.md diff=markdown
+*.php diff=php
+
+/.github export-ignore
+CHANGELOG.md export-ignore
+.styleci.yml export-ignore
+
+php artisan make:livewire CategoryTable
+php artisan livewire:form ComponentForm
+php artisan livewire:
+
+// 
+
+Saya seorang web developer, 
+berikut code  
+Dapatkah Anda memperbaiki code  
+
+Tuliskan code secara clean code
+php artisan livewire:publish --config
+composer require livewire/livewire livewire/volt --prefer-dist --timeout=300
+
+composer require robsontenorio/mary
+
+php artisan mary:install
+
+https://youtu.be/tgAyFfCxpYo?t=1262
+php artisan key:generate
+php artisan migrate:fresh --seed
+php artisan make:model Pembelian -mfsc
+php artisan make:controller (nama_controller) --resource
+php artisan make:view components\
+php artisan make:request UserRequest
+
+$orders = Order::toBase()->get();
+$user = App\Models\User::all();
+ttowne@example.org
+
+<div x-data="{ open: false }">
+    <button x-on:click="open = ! open">Toggle Dropdown</button>
+ 
+    <div x-show="open" x-transition>
+        Dropdown Contents...
+    </div>
+</div>
+
+
+composer create-project laravel/laravel:^11.0 nama_folder
+
+laravel new example-app
+
+cd example-app
+npm install && npm run build
+composer run dev
+
+composer require barryvdh/laravel-debugbar --dev
+
+composer require --dev laravel-lang/common
+
+php artisan lang:update
+
+php artisan view:clear
+php artisan config:clear
+php artisan cache:clear
+
+<div wire:key="{{ $post->id }}"> 
+            <!-- ... -->
+        </div>
+
+C:\xampp\htdocs\Laravell\laravel_marry>php artisan octane:install --server=frankenphp
+
+  Unable to locate FrankenPHP binary. Should Octane download the binary for your operating system? (yes/no) [yes]
+❯ yes
+
+   ERROR  FrankenPHP binaries are currently only available for Linux (x86_64, aarch64) and macOS. Other systems should use the Docker images or compile FrankenPHP manually.
