@@ -1,17 +1,17 @@
 <div>
 	<!-- HEADER -->
-	<x-header title="Hello" separator progress-indicato>
+	<x-header title="Data Produk" separator progress-indicato>
 		<x-slot:middle class="!justify-end">
 		<x-input placeholder="Search..." wire:model.live.debounce.350ms="search" clearable icon="o-magnifying-glass" />
 	</x-slot:middle>
 	<x-slot:actions>
 		{{-- <x-button label="Tambah data" @click="$wire.drawerForm = true" responsive icon="o-funnel" /> --}}
-		<x-button label="Tambah data" wire:click="add()" responsive icon="o-funnel" />
+		<x-button label="Tambah data" wire:click="showDrawer()" responsive icon="o-funnel" />
 	</x-slot:actions>
 </x-header>
 
 <!-- TABLE  -->
-{{-- {{ dd($products) }} --}}
+
 <x-card>
 	<x-table :headers="$headers" :rows="$products" :sort-by="$sortBy" with-pagination>
 		@scope('cell_index', $product)
@@ -19,7 +19,7 @@
 		@endscope
 		@scope('cell_action', $product)
 		<div class="flex space-x-2">
-			<x-button icon="o-pencil" wire:click="add('{{ $product->id }}')" class="btn-ghost btn-sm text-blue-500" />
+			<x-button icon="o-pencil" wire:click="showDrawer('{{ $product->id }}')" class="btn-ghost btn-sm text-blue-500" />
 			<x-button icon="o-trash" wire:click="delete('{{ $product->id }}')" wire:confirm="Are you sure?" spinner class="btn-ghost btn-sm text-red-500" />
 		</div>
 		@endscope
@@ -41,20 +41,22 @@
 				    label="Satuan"
 				    wire:model="form.unit"
 				    :options="$units"
-				    optionValue="name"
+				    optionValue="unit_name"
+				    optionLabel="unit_name"
 				    placeholder="Search ..."
 				    single
 				    searchable />
 					<x-input label="Harga Beli" wire:model="form.purchase_price" />
-				{{-- {{ dd($categories) }} --}}
 				</div>
+
 				<div class="w-80 lg:w-2/5">
 					<x-input label="Harga Jual" wire:model="form.selling_price" />
 				  <x-choices-offline
 				    label="Kategori"
 				    wire:model="form.category"
 				    :options="$categories"
-				    optionValue="name"
+				    optionValue="category_name"
+				    optionLabel="category_name"
 				    placeholder="Search ..."
 				    single
 				    searchable />
@@ -62,7 +64,8 @@
 				    label="Rak"
 				    wire:model="form.shelf"
 				    :options="$shelves"
-				    optionValue="name"
+				    optionValue="shelf_name"
+				    optionLabel="shelf_name"
 				    placeholder="Search ..."
 				    single
 				    searchable />

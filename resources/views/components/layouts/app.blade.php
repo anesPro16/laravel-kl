@@ -50,14 +50,21 @@
 
                     <x-menu-separator />
                 @endif
+                <x-menu-sub title="Penjualan" icon="s-building-storefront">
+                    <x-menu-item title="Kasir" icon="s-shopping-cart" link="#" />
+                    <x-menu-item title="Daftar Penjualan" icon="c-presentation-chart-line" link="#" />
+                </x-menu-sub>
 
-                <x-menu-item title="Category" icon="o-sparkles" link="/category" />
-                <x-menu-item title="Product" icon="o-archive-box" link="/product" />
-                <x-menu-item title="Unit" icon="o-wifi" link="/unit" />
-                {{-- <x-menu-item title="Kategori" icon="o-sparkles" link="/kategori" /> --}}
-                <x-menu-sub title="Settings" icon="o-cog-6-tooth">
-                    <x-menu-item title="Wifi" icon="o-wifi" link="####" />
-                    <x-menu-item title="Archives" icon="o-archive-box" link="####" />
+                <x-menu-sub title="Pembelian" icon="m-gift">
+                    <x-menu-item title="Pesanan Pembelian" icon="m-gift-top" link="#" />
+                    <x-menu-item title="Daftar Pembelian" icon="c-presentation-chart-bar" link="#" />
+                </x-menu-sub>
+
+                <x-menu-sub title="Master Data" icon="s-circle-stack">
+                    <x-menu-item title="Data Produk" icon="m-archive-box" link="/product" />
+                    <x-menu-item title="Data Kategori" icon="m-sparkles" link="/category" />
+                    <x-menu-item title="Data Satuan" icon="m-cube" link="/unit" />
+                    <x-menu-item title="Data Rak" icon="c-folder-open" link="####" />
                 </x-menu-sub>
                 <x-theme-toggle class="btn btn-circle btn-ghost" />
             </x-menu>

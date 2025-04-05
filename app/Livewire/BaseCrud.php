@@ -15,7 +15,6 @@ abstract class BaseCrud extends Component
 
     public bool $showModal = false;
     public string $search = '';
-    // public string $recordId = '';
     public ?string $recordId = null;
     public array $sortBy = ['column' => 'id', 'direction' => 'desc'];
     public Model $model;
@@ -38,6 +37,8 @@ abstract class BaseCrud extends Component
 
   public function render()
   {
-    return view('livewire.base-crud');
+    return view('livewire.base-crud', [
+        'search' => $this->search,
+    ]);
   }
 }

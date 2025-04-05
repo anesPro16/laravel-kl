@@ -22,18 +22,7 @@ class ProductTable extends Component
 
 	public ComponentForm $form;
 
-  public bool $showModal = false;
-
   public bool $drawerForm = false;
-
-  public $name = 'Umum';
-
-  public string $categoryId = '';
-
-  public string $selectedType = '';
-
-	#[Validate('required|unique:products,category_name')]
-  public string $categoryName = '';
 
   public string $search = '';
 
@@ -73,41 +62,29 @@ class ProductTable extends Component
     ];
   }
 
-  // Clear filters
-  public function clear(): void
-  {
-      $this->reset();
-      $this->success('Filters cleared.', position: 'toast-bottom');
-  }
-
   // Delete action
   public function delete($id): void
   {
-  		Product::find($id)?->delete();
-      $this->warning("Will delete #$id", 'It is fake.', position: 'toast-bottom');
+    if (Product::destroy($id)) {
+        $this->toast('success', 'Data berhasil dihapus!');
+    }
   }
 
   public function save()
   {
     $this->form->save(); // Memanggil method save() di UserForm
-    $this->toast('User berhasil ditambahkan!', 'success');
+    $message = $this->form->record->id ? 'Data berhasil diupdate' : 'Data berhasil dibuat';
+    $this->success($message, 'Success!', 'toast-bottom');
     $this->reset();
   }
 
-  public function add(Product $product = null)
+  public function showDrawer(Product $product = null)
   {
-    $this->form->fillForm(record: $product);
+    $this->form->fillForm($product);
     $this->resetValidation();
     $this->drawerForm = true;
   }
 
-
-  /*public function edit(Product $product)
-  {
-    $this->form->fillForm(record: $product);
-    $this->resetValidation();
-    $this->drawerForm = true;
-  }*/
 
   // Reset pagination when any component property changes
   public function updated($property): void

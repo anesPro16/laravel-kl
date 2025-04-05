@@ -13,45 +13,30 @@ class ComponentForm extends Form
 {
     public ?Product $record;
 
-    public ?string $productId = null;
-
-    #[Validate('required|unique:products,product_name, onUpdate: false')]
     public string $product_name = '';
 
-    #[Validate('required')]
     public string $type = '';
 
-    #[Validate('required')]
     public string $product_code = '';
 
-    #[Validate('required')]
     public string $barcode = '';
 
-    #[Validate('required')]
     public string $factory_name = '';
 
-    #[Validate('required')]
     public string $unit = '';
 
-    #[Validate('required|numeric|min:0')]
     public ?string $purchase_price = '';
 
-    #[Validate('required|numeric|min:0')]
     public ?string $selling_price = '';
 
-    #[Validate('required')]
     public string $category = '';
 
-    #[Validate('required')]
     public string $shelf = '';
 
-    #[Validate('required|integer|min:0')]
     public ?string $stock = '';
 
-    #[Validate('nullable|integer|min:0')]
     public ?string $min_stock = '';
 
-    #[Validate('required|in:Dijual,Tidak Dijual')]
     public string $status = '';
 
     public function fillForm(Product $record = null)
@@ -60,7 +45,11 @@ class ComponentForm extends Form
 
         $this->product_name = $record->product_name ?? '';
         $this->type = $record->type ?? 'Obat';
-        $this->updateProductCode();
+        if ($record == null) {
+            updateProductCode();
+        } else {
+            $this->product_code = $record->product_code ?? '';
+        }
         $this->barcode = $record->barcode ?? '';
         $this->factory_name = $record->factory_name ?? '';
         $this->unit = $record->unit ?? '';
@@ -80,7 +69,6 @@ class ComponentForm extends Form
 
     public function updateProductCode()
     {
-        // $this->product_code = strtoupper(substr($this->type, 0, 2)) . '-' . strtoupper(substr($this->product_name, 0, 3)) . '-00001';
         $kode = strtoupper(substr($this->type, 0, 2)) . '-' . strtoupper(substr($this->product_name, 0, 3));
         // Cek apakah kode sudah ada di database
         $lastProduk = Product::where('product_code', 'like', $kode . '%')->orderBy('product_code', 'desc')->first();
@@ -105,13 +93,13 @@ class ComponentForm extends Form
             'barcode' => 'required',
             'factory_name' => 'required',
             'unit' => 'required',
-            'purchase_price' => 'required',
-            'selling_price' => 'required',
+            'purchase_price' => 'required|numeric|min:0',
+            'selling_price' => 'required|numeric|min:0',
             'category' => 'required',
             'shelf' => 'required',
-            'stock' => 'required',
-            'min_stock' => 'required',
-            'status' => 'required',
+            'stock' => 'required|integer|min:0',
+            'min_stock' => 'nullable|integer|min:0',
+            'status' => 'required|in:Dijual,Tidak Dijual',
         ]);
 
         Product::updateOrCreate(

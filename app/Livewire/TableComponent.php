@@ -30,6 +30,8 @@ class TableComponent extends Component
     public string $search = '';
     public array $sortBy = ['column' => 'id', 'direction' => 'desc'];
 
+     protected $listeners = ['updateSearch' => 'setSearch'];
+
     public function mount($headers, Model $model, string $fieldName, string $search, array $sortBy)
     {
         $this->headers = $headers;
@@ -37,6 +39,16 @@ class TableComponent extends Component
         $this->fieldName = $fieldName;
         $this->search = $search;
         $this->sortBy = $sortBy;
+    }
+
+    public function setSearch($value)
+    {
+        $this->search = $value;
+    }
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
     }
 
     
@@ -61,7 +73,6 @@ class TableComponent extends Component
             } else {
                 $this->fieldName = Unit::find($id)?->unit_name ?? '';
             }
-            // $this->{$this->fieldName} = $this->model::find($id)?->{$this->fieldName} ?? '';
         }
     }
 

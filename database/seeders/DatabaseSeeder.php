@@ -31,13 +31,13 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($category_name as $category) {
-            Category::firstOrCreate(['name' => $category]);
+            Category::firstOrCreate(['category_name' => $category]);
         }
 
         $shelf_name = ['A1', 'A2', 'A3', 'A4', 'A5', 'A5', 'A6', 'A7', 'B1', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8'];
 
         foreach ($shelf_name as $shelf) {
-            Shelf::firstOrCreate(['name' => $shelf]);
+            Shelf::firstOrCreate(['shelf_name' => $shelf]);
         }
 
         // Shelf::factory(7)->create();
@@ -46,9 +46,7 @@ class DatabaseSeeder extends Seeder
         $unit_name = ['Box isi 200', 'Botol', 'Kaplet', 'Box isi 50', 'Box isi 100', 'Plester', 'Gulung', 'mg', 'Lusin', 'Kotak', 'Strip', 'Tablet'];
 
         foreach ($unit_name as $unit) {
-            Unit::firstOrCreate(['name' => $unit]);
+            Unit::firstOrCreate(['unit_name' => $unit]);
         }
-
-        // $this->call(ProductSeeder::class);
     }
 }

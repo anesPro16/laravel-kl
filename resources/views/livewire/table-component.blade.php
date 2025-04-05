@@ -20,7 +20,7 @@
 		<!-- Modal Form -->
 		@if ($showModal)
 		<x-modal wire:model="showModal" x-show="showModal" title="Form {{ Str::headline(class_basename(get_class($this->model))) }}" subtitle="Livewire example">
-		    <x-form wire:submit.prevent="save"> <!-- Panggil save di BaseCrud -->
+		    <x-form wire:submit.prevent="save">
 		        <x-input label="Name" wire:model.defer="fieldName" />
 
 		        <x-slot:actions>
