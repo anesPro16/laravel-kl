@@ -48,5 +48,7 @@ class DatabaseSeeder extends Seeder
         foreach ($unit_name as $unit) {
             Unit::firstOrCreate(['unit_name' => $unit]);
         }
+
+        $this->call(ProductSeeder::class);
     }
 }

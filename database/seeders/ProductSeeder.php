@@ -2,7 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Product;
+use App\Models\Shelf;
+use App\Models\Unit;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +32,7 @@ class ProductSeeder extends Seeder
         ];
         $tipeList = ['Alkes', 'Jasa', 'Obat', 'Umum'];
 
-        for ($i = 0; $i < 4; ++$i) {
+        for ($i = 0; $i < 24; ++$i) {
             $nama = $obatList[array_rand($obatList)];
             $tipe = $tipeList[array_rand($tipeList)];
             $barcode = fake()->ean13();
@@ -41,17 +44,17 @@ class ProductSeeder extends Seeder
             // Generate kode produk
             $kodeProduk = $this->generateKodeProduk($tipe, $nama);
 
-            Product::create([
+            Product::firstOrCreate([
                 'product_name' => $nama,
                 'type' => $tipe,
                 'product_code' => $kodeProduk,
                 'barcode' => $barcode,
                 'factory_name' => fake()->company(),
-                'unit' => Str::random(10),
+                'unit' => Unit::inRandomOrder()->first()->unit_name,
                 'purchase_price' => $hargaBeli,
                 'selling_price' => $hargaJual,
-                'category' => Str::random(10),
-                'shelf' => Str::random(10),
+                'category' => Category::inRandomOrder()->first()->category_name,
+                'shelf' => Shelf::inRandomOrder()->first()->shelf_name,
                 'stock' => $stok,
                 'min_stock' => $stokMin,
                 // 'status' => 'yes',

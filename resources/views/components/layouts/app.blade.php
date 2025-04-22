@@ -44,14 +44,15 @@
 
                     <x-list-item :item="$user" value="name" sub-value="email" no-separator no-hover class="-mx-2 !-my-2 rounded">
                         <x-slot:actions>
-                            <x-button icon="o-power" class="btn-circle btn-ghost btn-xs" tooltip-left="logoff" no-wire-navigate link="/logout" />
+                            <x-button icon="o-power" class="btn-circle btn-ghost btn-xs" tooltip-left="logoff" wire-navigate link="/logout" />
+                            {{-- <x-button icon="o-power" class="btn-circle btn-ghost btn-xs" tooltip-left="logoff" no-wire-navigate link="/logout" /> --}}
                         </x-slot:actions>
                     </x-list-item>
 
                     <x-menu-separator />
                 @endif
                 <x-menu-sub title="Penjualan" icon="s-building-storefront">
-                    <x-menu-item title="Kasir" icon="s-shopping-cart" link="#" />
+                    <x-menu-item title="Kasir" icon="s-shopping-cart" link="/cashier" />
                     <x-menu-item title="Daftar Penjualan" icon="c-presentation-chart-line" link="#" />
                 </x-menu-sub>
 
@@ -66,6 +67,9 @@
                     <x-menu-item title="Data Satuan" icon="m-cube" link="/unit" />
                     <x-menu-item title="Data Rak" icon="c-folder-open" link="####" />
                 </x-menu-sub>
+                @guest
+                    <x-menu-item title="Login" icon="o-arrow-left-end-on-rectangle" link="/login" />
+                @endguest
                 <x-theme-toggle class="btn btn-circle btn-ghost" />
             </x-menu>
         </x-slot:sidebar>

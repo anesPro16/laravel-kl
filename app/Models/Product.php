@@ -2,20 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class Product extends Model
 {
 	protected $guarded = [];
-
-  /*protected $fillable = [
-    'product_name',
-    'type',
-    'product_code',
-    'barcode',
-    'factory_name',
-  ];*/
 
   public $incrementing = false;
   protected $keyType = 'string';
@@ -29,4 +22,10 @@ class Product extends Model
           $product->id = (string) Str::ulid();
       });
   }
+
+  public function cartItems()
+  {
+      return $this->hasMany(CartItem::class);
+  }
+
 }

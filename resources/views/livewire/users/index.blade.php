@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Livewire\Volt\Component;
@@ -9,6 +10,11 @@ new class extends Component {
     use Toast;
 
     public string $search = '';
+
+    public array $product_name = [];
+
+
+    public array $carts = [];
 
     public bool $drawer = false;
 
@@ -57,18 +63,26 @@ new class extends Component {
             });
     }
 
+    public function add()
+    {
+        $this->carts[] = $this->product_name;
+
+        //$this->reset('todo');
+    }
+
     public function with(): array
     {
         return [
             'users' => $this->users(),
-            'headers' => $this->headers()
+            'headers' => $this->headers(),
+            'products' => Product::all(),
         ];
     }
 }; ?>
 
 <div>
     <!-- HEADER -->
-    <x-header title="Hello" separator progress-indicator>
+    <x-header title="Hello" separator progress-indicato>
         <x-slot:middle class="!justify-end">
             <x-input placeholder="Search..." wire:model.live.debounce="search" clearable icon="o-magnifying-glass" />
         </x-slot:middle>
@@ -86,6 +100,18 @@ new class extends Component {
         </x-table>
     </x-card>
 
+    {{-- <x-form wire:submit="add">
+        <x-choices-offline label="Multiple" wire:model.live="product_name" optionValue="product_name" optionLabel="product_name" :options="$products" clearable searchable />
+        <button type="submit">Add</button>
+
+    </x-form>
+
+    <ul class="my-8">
+      @foreach ($product_name as $product)
+          <li>{{ $product }}</li>
+      @endforeach
+  </ul> --}}
+  
     <!-- FILTER DRAWER -->
     <x-drawer wire:model="drawer" title="Filters" right separator with-close-button class="lg:w-1/3">
         <x-input placeholder="Search..." wire:model.live.debounce="search" icon="o-magnifying-glass" @keydown.enter="$wire.drawer = false" />

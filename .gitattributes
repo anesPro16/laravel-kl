@@ -5,9 +5,18 @@
 *.md diff=markdown
 *.php diff=php
 
+LOGIN DULU!!!
+'email' => 'test@example.com',
+
 /.github export-ignore
 CHANGELOG.md export-ignore
 .styleci.yml export-ignore
+
+Saya seorang web developer, 
+berikut code  
+Dapatkah Anda memperbaiki code  
+
+Tuliskan code secara clean code
 
 php artisan make:livewire CategoryTable
 php artisan livewire:form ComponentForm 
@@ -45,4 +54,3 @@ php artisan lang:update
 php artisan view:clear
 php artisan config:clear
 php artisan cache:clear
-
