@@ -11,31 +11,54 @@
       <input 
         type="number" 
         wire:model.blur="discount" 
-        class="w-10 border rounded p-1  @error('discount') border-red-500 @enderror" 
+        class="w-20 border rounded p-1  @error('discount') border-red-500 @enderror" 
         placeholder="Diskon"
         min="0"
-        max="{{ $discount_type === 'percent' ? 50 : null }}">
+        max="{{ $discount_type === '%' ? 50 : null }}">
         @error('discount')
           <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
         @enderror
     </div>
-    <div class="w-10">
-      <select wire:model.live="discount_type" class="w-full border rounded p-1">
-        <option value="percent">%</option>
-        <option value="nominal">Rp</option>
-      </select>
+    <div class="w-20">
+      <x-radio label="Diskon" :options="$types" optionValue="id" optionLabel="id" wire:model.live="discount_type" />
     </div>
     {{-- <span>{{$summary['discount']}}</span> --}}
   </div>
 
   <div class="flex justify-between">
     <span class="font-semibold">Total</span>
-    <span class="text-right">Rp{{ number_format($summary['grand_total']) }}</span>
+    {{$summary['grandTotal']}}
   </div>
+
+  <div class="flex justify-end">
+    {{-- <span class="font-semibold">Uang Tunai</span> --}}
+    <x-toggle label="Uang Tunai" wire:model.live="paid_type" right/>
+  </div>
+{{-- {{ dd($paid_type) }} --}}
+  
+  @if ($paid_type === false)
+    <div class="flex justify-between">
+      <span class="font-semibold">Metode Pembayaran</span>
+      <x-select
+      placeholder="Metode Pembayaran"
+         wire:model.live="selectedMethod"
+        :options="$paid_methods"
+        optionValue="name"
+        optionLabel="name"
+        {{-- @readonly($paid_type != false) --}}
+      />
+    </div>
+  @endif
 
   <div class="flex justify-between items-center">
     <label class="font-semibold">Bayar</label>
-    <input type="number" wire:model.blur="paid_amount" class="w-32 border rounded p-1 text-right" placeholder="Bayar">
+    <input 
+      type="number" 
+      wire:model.blur="paid_amount" 
+      x-on:click="$wire.$refresh()"
+      class="w-32 border rounded p-1 text-right" 
+      min="0"
+      placeholder="Bayar">
   </div>
 
   @error('paid_amount')
@@ -58,10 +81,10 @@
 </div>
 
   @if (session()->has('success'))
-  <div class="my-2 text-green-600">
-    {{ session('success') }}
-  </div>
-@endif
+    <div class="my-2 text-green-600">
+      {{ session('success') }}
+    </div>
+  @endif
 </div>
 
 {{-- LOGIN DULU!!! LOGIN DULU!!! LOGIN DULU!!! LOGIN DULU!!! LOGIN DULU!!! --}}
@@ -91,7 +114,8 @@
             min="1"
             max="{{ $item->product->stock }}"
             x-model.number="qty"
-            x-on:change="$wire.updateQuantity({{ $item->id }}, qty)"
+            x-on:blur="$wire.$refresh()"
+            x-on:change="$wire.updateQuantity({{ $item->id }}, qty);"
             class="w-12 text-center border border-gray-300 rounded"
         />
          <button x-show="qty < {{ $item->product->stock }}" x-on:click="$wire.updateQuantity({{ $item->id }}, qty + 1); qty++" icon="o-plus">+</button>
@@ -102,23 +126,42 @@
         {{ $item->product->unit }}
       @endscope
 
-      @scope('cell_price', $item)
-        <x-select :options="[
-          ['id' => 1, 'name' => 'Harga Utama'],
-          ['id' => 2, 'name' => 'Harga Pokok tertinggi'],
-          ['id' => 3, 'name' => 'Harga Custom'],
-          ['id' => 4, 'name' => 'Harga Diskon'],
-        ]"/>
-      @endscope
+      @foreach ($cart->items as $index => $item)
+  @scope('cell_price', $item)
+    <select 
+      class="border rounded p-1"
+      wire:change="updateOptionPrice({{ $item['id'] }}, {{ $item['product']['selling_price'] }}, $event.target.value)"
+    >
+      <option value="1" @selected($item['option'] == 1)>Harga Klinik</option>
+      <option value="2" @selected($item['option'] == 2)>Harga Bebas</option>
+      <option value="3" @selected($item['option'] == 3)>Harga Resep</option>
+      <option value="4" @selected($item['option'] == 4)>Harga Custom</option>
+    </select>
+  @endscope
+@endforeach
+
+
+
 
       @scope('cell_sell', $item)
-        <div x-data="{ sell: {{$item->product->selling_price}} }">
-         <span x-text="sell"></span>
+        <div x-data="{ price_at_time: {{$item->price_at_time}} }">
+          <input
+            type="number"
+            {{-- value="{{$item->price_at_time}}" --}}
+            x-model.number="price_at_time"
+            x-on:blur="$wire.$refresh()"
+            x-on:change="$wire.updatePriceAtTime({{ $item->id }}, price_at_time);"
+            class="w-32 border rounded p-1 text-right"
+            min="0"
+            @disabled($item->option != 4)
+            @readonly($item->option != 4)
+          >
         </div>
       @endscope
 
       @scope('cell_sub_total', $item)
-        <div x-data="{ sum: {{$item->quantity * $item->product->selling_price}} }">
+        {{-- <div x-data="{ sum: {{$item->quantity * $item->product->selling_price}} }"> --}}
+        <div x-data="{ sum: {{$item->quantity * $item->price_at_time}} }">
          <span x-text="sum"></span>
         </div>
       @endscope
@@ -128,8 +171,7 @@
       @endscope
 
     @endforeach
-  </x-table>
-    	
+  </x-table>    	
     
 
 </div>

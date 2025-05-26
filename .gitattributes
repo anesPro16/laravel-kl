@@ -2,15 +2,28 @@
 *.blade.php diff=html
 *.css diff=css
 *.html diff=html
+.styleci.yml export-ignore
+/.github export-ignore
+CHANGELOG.md export-ignore
 *.md diff=markdown
 *.php diff=php
 
-LOGIN DULU!!!
-'email' => 'test@example.com',
+ngrok config add-authtoken 2g0IbzVHDHIVaDmX8t8uk6vTE3I_4nG3ZH6tXNJEzwkmEw9w4
+ngrok http http://localhost:8080
 
-/.github export-ignore
-CHANGELOG.md export-ignore
-.styleci.yml export-ignore
+https://07f2-120-188-4-141.ngrok-free.app
+
+LOGIN DULU!!!
+
+data akun:
+
+'email' = test@example.com,
+password = password
+
+'email' = cobacoba,
+password = cobacoba
+
+'email' => 'brody.kozey@example.com',
 
 Saya seorang web developer, 
 berikut code  
@@ -27,6 +40,7 @@ composer require robsontenorio/mary
 
 php artisan mary:install
  
+php artisan make:volt index --class
 php artisan key:generate
 php artisan migrate:fresh --seed
 php artisan make:model Pembelian -mfsc
@@ -37,6 +51,8 @@ php artisan make:request UserRequest
 $orders = Order::toBase()->get();
 $user = App\Models\User::all();
 
+https://a022-101-255-149-226.ngrok-free.app
+
 composer create-project laravel/laravel:^11.0 nama_folder
 
 laravel new example-app
@@ -45,12 +61,21 @@ cd example-app
 npm install && npm run build
 composer run dev
 
+composer require --dev jn-jairo/laravel-ngrok
+
 composer require barryvdh/laravel-debugbar --dev
 
 composer require --dev laravel-lang/common
+
+composer require maatwebsite/excel
 
 php artisan lang:update
 
 php artisan view:clear
 php artisan config:clear
 php artisan cache:clear
+
+Tidak Ada Pemisah antara Satuan Mata Uang dengan Nominal
+
+Penulisan rupiah yang sesuai ditulis tanpa adanya spasi pemisah antara satuan mata uang (dalam hal ini rupiah) dengan nominalnya. Dengan demikian penulisan yang benar yakni "Rp100.000",
+

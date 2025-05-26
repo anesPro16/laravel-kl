@@ -1,243 +1,178 @@
-<?php
+<?php 
 
 namespace App\Livewire;
 
 use App\Models\Cart;
-use App\Models\CartItem;
 use App\Models\Product;
-use App\Models\Unit;
 use App\Services\CartService;
-use Illuminate\Support\Collection;
+use App\Services\CheckoutService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Mary\Traits\Toast;
+
 #[Title('Kasir')]
 class Cashier extends Component
 {
-	use Toast;
+    use Toast;
 
-	public array $product_name = [];
+    public ?string $selectedMethod = null;
+    public bool $paid_type = false;
 
-	public $option_price = '';
-  
-  public $cart;
+    public float $discount = 0;
+    public string $discount_type = '%';
+    public float $paid_amount = 0;
 
-  public array $selectedProductId = [];
+    public array $selectedProductId = [];
+    public array $product_name = [];
 
-	/*public float $discount = 0;
-	public string $discountType = 'nominal';
-	public float $total = 0;
-	public float $totalAfterDiscount = 0;*/
-	public float $discount = 0;
-	public string $discount_type = 'percent'; // 'percent' atau 'nominal'
-	public float $paid_amount = 0;
+    public $cart;
 
-	 // Table headers
-    public function headers(): array
+    public array $paid_methods = [
+        ['name' => 'QRIS BCA'],
+        ['name' => 'QRIS Gopay'],
+        ['name' => 'BPJS'],
+        ['name' => 'QRIS ALL'],
+        ['name' => 'EDC BCA'],
+        ['name' => 'EDC BRI'],
+        ['name' => 'Goapotik'],
+    ];
+
+    public const DISCOUNT_TYPES = [
+        ['id' => '%'],
+        ['id' => 'Rp'],
+    ];
+
+    public function mount(CartService $cartService)
     {
-      return [
-          ['key' => 'index', 'label' => 'No.', 'class' => 'w-1'],
-          ['key' => 'name', 'label' => 'Produk', 'class' => 'w-1'],
-          ['key' => 'quantity', 'label' => 'kuantitas', 'class' => 'w-1'],
-          ['key' => 'unit', 'label' => 'Satuan', 'class' => 'w-1'],
-          ['key' => 'price', 'label' => 'Opsi Harga', 'class' => 'w-1'],
-          ['key' => 'sell', 'label' => 'Harga Jual', 'class' => 'w-1'],
-          ['key' => 'sub_total', 'label' => 'Sub Total', 'class' => 'w-1'],
-          ['key' => 'action', 'label' => 'Aksi', 'class' => 'w-1'],
-      ];
+        $this->loadCart($cartService);
     }
 
-    public function mount()
+    public function loadCart(CartService $cartService)
     {
-        $this->loadCart();
+        $this->paid_type = false;
+        $this->cart = $cartService->getUserCart(Auth::id());
     }
 
-    public function loadCart()
+    public function updatedSelectedProductId(CartService $cartService)
     {
-        $this->cart = Cart::with('items.product')
-            ->where('user_id', Auth::id())
-            ->firstOrCreate(['user_id' => Auth::id()]);
-    }
-
-    public function updatedSelectedProductId()
-    {
-        // Ambil elemen terakhir yang dipilih (opsi terbaru)
         $productId = end($this->selectedProductId);
 
         if ($productId) {
-            $this->addToCart($productId);
-
-            // Hapus dari array setelah diproses
-            $this->selectedProductId = array_filter(
-                $this->selectedProductId,
-                fn ($id) => $id !== $productId
-            );
+            $cartService->addToCart($productId);
+            $this->selectedProductId = array_filter($this->selectedProductId, fn ($id) => $id !== $productId);
+            $this->loadCart($cartService);
+            $this->dispatch('cart-updated');
         }
     }
 
-
-public function getCartSummary(): array
-{
-    $subtotal = $this->cart->items->sum(fn ($item) => $item->quantity * $item->price_at_time);
-    $value = (float) ($this->discount ?? 0);
-    $valuePaidAmount = (float) ($this->paid_amount ?? 0);
-
-    // Validasi diskon maksimal 50% jika tipe persen
-    if ($this->discount_type === 'percent' && $value > 50) {
-        $value = 50;
-        $this->discount = 50; // juga update di UI agar tidak tetap 51++
-    }
-
-    $discountValue = $this->discount_type === 'percent'
-        ? ($subtotal * $value / 100)
-        : $value;
-
-    $grandTotal = max(0, $subtotal - $discountValue);
-    $change = max(0, $valuePaidAmount - $grandTotal);
-
-    return [
-        'subtotal'     => $subtotal,
-        'discount'     => $discountValue,
-        'grand_total'  => $grandTotal,
-        'paid_amount'  => $valuePaidAmount,
-        'change'       => $change,
-    ];
-}
-
-public function updatedDiscount($value)
-{
-    // Reset error jika ada
-    $this->resetErrorBag('discount');
-
-    if ($this->discount_type === 'percent' && $value > 50) {
-        // Batasi input discount maksimal 50%
-        $this->discount = 50;
-        $this->addError('discount', 'Diskon tidak boleh lebih dari 50%.');
-    }
-
-    if ($value < 0) {
-        $this->discount = 0;
-        $this->addError('discount', 'Diskon tidak boleh negatif.');
-    }
-}
-
-
-    public function addToCart($productId)
+    public function updatedDiscount($value)
     {
-        $userId = Auth::id();
-        $cart = Cart::firstOrCreate(['user_id' => $userId]);
-
-        $item = $cart->items()->where('product_id', $productId)->first();
-
-        if ($item) {
-            $item->increment('quantity');
-        } else {
-            $product = Product::findOrFail($productId);
-            $cart->items()->create([
-                'product_id' => $productId,
-                'quantity' => 1,
-                'price_at_time' => $product->selling_price,
-            ]);
+        if ($this->discount_type === '%' && $value > 50) {
+            $this->discount = 50;
+            $this->error('Diskon tidak boleh lebih dari 50%!', timeout: 5000);
         }
 
-        $this->loadCart(); // Refresh cart
-        $this->dispatch('cart-updated');
+        if ($value < 0) {
+            $this->discount = 0;
+            $this->error('Diskon tidak boleh negatif!', timeout: 5000);
+        }
+    }
+
+    public function updatedPaidType()
+    {
+        $this->paid_amount = $this->roundUpToThousand($this->getCartSummary()['grandTotal']);
+    }
+
+    public function updatedSelectedMethod()
+    {
+        $this->paid_amount = $this->roundUpToThousand($this->getCartSummary()['grandTotal']);
+    }
+
+    public function getCartSummary(): array
+    {
+        return app(CartService::class)->getCartSummary($this->cart, $this->discount, $this->discount_type, $this->paid_amount);
+    }
+
+    public function updateOptionPrice($cartItemId, $basePrice, $option)
+    {
+        app(CartService::class)->updateOptionPrice($cartItemId, $basePrice, $option, $this->cart);
+        $this->loadCart(app(CartService::class));
+    }
+
+    public function updatePriceAtTime($cartItemId, $price_at_time)
+    {
+        app(CartService::class)->updatePriceAtTime($cartItemId, $price_at_time);
+        $this->loadCart(app(CartService::class));
     }
 
     public function updateQuantity($cartItemId, $quantity)
-{
-    $cartItem = CartItem::with('product')->findOrFail($cartItemId); // Pastikan relasi product tersedia
-
-    // Validasi cart item milik cart yang aktif
-    if ($cartItem->cart_id !== $this->cart->id) {
-        abort(403);
+    {
+        app(CartService::class)->updateQuantity($cartItemId, $quantity, $this->cart);
+        $this->loadCart(app(CartService::class));
     }
 
-    // Ambil stok produk
-    $stock = $cartItem->product->stock;
-
-    // Cegah qty < 1 atau > stok produk
-    if ($quantity > $stock) {
-    	$quantity = $stock;
-    	$cartItem->update(['quantity' => $quantity]);
-    } else {
-    	// $quantity = max(1, min((int) $quantity, $stock));
-    	$quantity = max(1, (int) $quantity);    	
-    }
-
-    // Update quantity jika valid
-    $cartItem->update(['quantity' => $quantity]);
-
-    // $this->loadCart(); // Refresh data cart
-}
-
-public function checkout()
-{
-    $summary = $this->getCartSummary();
-
-    if ($summary['paid_amount'] < $summary['grand_total']) {
-        $this->addError('paid_amount', 'Pembayaran tidak cukup.');
-        return;
-    }
-
-    DB::transaction(function () use ($summary) {
-        // 1. Buat transaksi penjualan
-        $sale = \App\Models\Sale::create([
-            'user_id'       => auth()->id(),
-            'subtotal'      => $summary['subtotal'],
-            'discount'      => $this->discount,
-            'discount_type' => $this->discount_type,
-            'grand_total'   => $summary['grand_total'],
-            'paid_amount'   => $summary['paid_amount'],
-            'change'        => $summary['change'],
-        ]);
-
-        // 2. Simpan item transaksi dan kurangi stok
-        foreach ($this->cart->items as $item) {
-            // Buat item penjualan
-            $sale->items()->create([
-                'product_id' => $item->product_id,
-                'quantity'   => $item->quantity,
-                'price'      => $item->price_at_time,
-                'subtotal'   => $item->quantity * $item->price_at_time,
-            ]);
-
-            // Kurangi stok produk
-            $product = \App\Models\Product::find($item->product_id);
-            if ($product) {
-                $product->decrement('stock', $item->quantity);
-            }
-        }
-
-        // 3. Kosongkan keranjang
-        $this->cart->items()->delete();
-
-        // 4. Reset form dan refresh cart
-        $this->reset(['discount', 'discount_type', 'paid_amount']);
-        $this->loadCart();
-    });
-
-    session()->flash('success', 'Transaksi berhasil disimpan!');
-}
-
-
-
-		// Delete action
-  public function delete($id): void
-  {
-    if (CartItem::destroy($id)) {
+    public function delete($id)
+    {
+        app(CartService::class)->deleteItem($id);
         $this->toast('success', 'Data berhasil dihapus!');
     }
-  }
 
-  public function render()
-  {
-      return view('livewire.cashier', [
-      	'products' => Product::all()->toArray(),
-      	'headers' => $this->headers(),
-      	'summary' => $this->getCartSummary(),
-      ]);
-  }
+    public function checkout(CheckoutService $checkoutService)
+    {
+        $paid_method = ($this->paid_type === true) ? 'Uang Tunai' : $this->selectedMethod;
+        if ($paid_method == "" || $paid_method === null) {
+            $this->error('Pilih Metode Pembayaran!', timeout: 5000);
+            return;
+        }
+        $item = $this->cart->items()->where('cart_id', $this->cart->id)->first();
+        $summary = $this->getCartSummary();
+
+        if ((int) $summary['grandTotal'] === 0 && $item === null) {
+            $this->error('Keranjang kosong!', timeout: 5000);
+            return;
+        }
+
+        if ($summary['paid_amount'] < $summary['grandTotal']) {
+            $kurang = number_format($summary['grandTotal'] - $summary['paid_amount']);
+            $this->error("Pembayaran tidak cukup!, kurang $kurang", timeout: 5000);
+            return;
+        }
+
+        $checkoutService->process($this->cart, $summary, $this->discount, $this->discount_type, $paid_method);
+
+        $this->reset(['discount', 'discount_type', 'paid_amount']);
+        $this->loadCart(app(CartService::class));
+        $this->success('Transaksi berhasil disimpan', timeout: 5000);
+    }
+
+    private function roundUpToThousand(int $value): int
+    {
+        return ceil($value / 1000) * 1000;
+    }
+
+    public function headers(): array
+    {
+        return [
+            ['key' => 'index', 'label' => 'No.', 'class' => 'w-1'],
+            ['key' => 'name', 'label' => 'Produk', 'class' => 'w-1'],
+            ['key' => 'quantity', 'label' => 'Kuantitas', 'class' => 'w-1'],
+            ['key' => 'unit', 'label' => 'Satuan', 'class' => 'w-1'],
+            ['key' => 'price', 'label' => 'Opsi Harga', 'class' => 'w-1'],
+            ['key' => 'sell', 'label' => 'Harga Jual', 'class' => 'w-1'],
+            ['key' => 'sub_total', 'label' => 'Sub Total', 'class' => 'w-1'],
+            ['key' => 'action', 'label' => 'Aksi', 'class' => 'w-1'],
+        ];
+    }
+
+    public function render()
+    {
+        return view('livewire.cashier', [
+            'products'     => Product::all()->toArray(),
+            'headers'      => $this->headers(),
+            'summary'      => $this->getCartSummary(),
+            'paid_methods' => $this->paid_methods,
+            'types'        => self::DISCOUNT_TYPES,
+        ]);
+    }
 }

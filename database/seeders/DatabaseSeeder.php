@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\PriceIncrease;
 use App\Models\Shelf;
+use App\Models\Supplier;
 use App\Models\Unit;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -16,11 +18,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+        ]);
+
+        User::factory()->create([
+            'email' => 'cobacoba',
+            'password' => 'cobacoba',
         ]);
 
         // Category::factory(7)->create();
@@ -50,5 +55,24 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call(ProductSeeder::class);
+
+        for ($i = 0; $i < 20; ++$i) {
+            Supplier::create([
+                'nama'    => fake()->name(),
+                'alamat'  => fake()->streetAddress(),
+                'no_telp' => fake()->phoneNumber(),
+                'email'   => fake()->unique()->safeEmail(),
+            ]);
+        }
+        
+        /*$kenaikan = [
+            ['type' => 'Klinik', 'price' => 0.15],
+            ['type' => 'Bebas', 'price' => 0.2],
+            ['type' => 'Resep Bebas', 'price' => 0.3],
+            ['type' => 'Resep', 'price' => 0.35],
+            ['type' => 'Custom', 'price' => 1],
+        ];
+
+        PriceIncrease::insert($kenaikan);*/
     }
 }

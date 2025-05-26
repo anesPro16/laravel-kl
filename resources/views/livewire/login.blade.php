@@ -9,7 +9,8 @@ new
 #[Layout('components.layouts.empty')]       // <-- Here is the `empty` layout
 #[Title('Login')]
 class extends Component {
-  #[Rule('required|email')]
+  //#[Rule('required|email')]
+  #[Rule('required')]
     public string $email = '';
  
     #[Rule('required')]
@@ -31,7 +32,8 @@ class extends Component {
             request()->session()->regenerate();
  
             //return redirect()->intended('/');
-            $this->redirect('/', navigate: true);
+            //$this->redirect('/', navigate: true);
+            $this->redirect('/cashier', navigate: true);
         }
  
         $this->addError('email', 'The provided credentials do not match our records.');

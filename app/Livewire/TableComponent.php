@@ -2,9 +2,9 @@
 
 namespace App\Livewire;
 
-use App\Livewire\Forms\ComponentForm;
 use App\Models\Category;
 use App\Models\Unit;
+use App\Models\Shelf;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -19,25 +19,22 @@ class TableComponent extends Component
     public array $headers = [];
     public Model $model;
 
-    public ComponentForm $form;
-
     public bool $showModal = false;
-    // public string $recordId = '';
     public ?string $recordId = null;
     public string $fieldName = '';
     public string $category_name;
+    public string $shelf_name;
     public string $unit_name;
     public string $search = '';
     public array $sortBy = ['column' => 'id', 'direction' => 'desc'];
 
-     protected $listeners = ['updateSearch' => 'setSearch'];
+    protected $listeners = ['updateSearch' => 'setSearch'];
 
-    public function mount($headers, Model $model, string $fieldName, string $search, array $sortBy)
+    public function mount($headers, Model $model, string $fieldName, array $sortBy)
     {
         $this->headers = $headers;
         $this->model = $model;
         $this->fieldName = $fieldName;
-        $this->search = $search;
         $this->sortBy = $sortBy;
     }
 
@@ -45,12 +42,6 @@ class TableComponent extends Component
     {
         $this->search = $value;
     }
-
-    public function updatedSearch()
-    {
-        $this->resetPage();
-    }
-
     
     public function records()
     {
@@ -70,6 +61,8 @@ class TableComponent extends Component
             $this->recordId = $id;
             if (class_basename(get_class($this->model)) === "Category") {
                 $this->fieldName = Category::find($id)?->category_name ?? '';
+            } elseif (class_basename(get_class($this->model)) === "Shelf") {
+                $this->fieldName = Shelf::find($id)?->shelf_name ?? '';
             } else {
                 $this->fieldName = Unit::find($id)?->unit_name ?? '';
             }

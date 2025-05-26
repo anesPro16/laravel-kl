@@ -14,9 +14,12 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('receipt')->nullable();
+            $table->string('status')->nullable();
             $table->decimal('subtotal', 10, 2);
             $table->decimal('discount', 10, 2);
             $table->string('discount_type');
+            $table->string('paid_methods');
             $table->decimal('grand_total', 10, 2);
             $table->decimal('paid_amount', 10, 2);
             $table->decimal('change', 10, 2);

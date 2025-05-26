@@ -8,12 +8,14 @@ use Livewire\Attributes\Title;
 #[Title('Data Satuan')]
 class Units extends BaseCrud
 {
+	public $title = 'Data Satuan';
+
 	public string $unit_name = '';
 
-    protected function getModelClass(): string
-    {
-        return Unit::class;
-    }
+  protected function getModelClass(): string
+  {
+      return Unit::class;
+  }
 
-    public string $fieldName = 'unit_name';
+  public string $fieldName = 'unit_name';
 }
