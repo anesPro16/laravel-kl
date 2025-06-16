@@ -1,0 +1,66 @@
+cd htdocs\Laravell\laravel_kl
+
+ngrok config add-authtoken 2g0IbzVHDHIVaDmX8t8uk6vTE3I_4nG3ZH6tXNJEzwkmEw9w4
+ngrok http http://localhost:8080
+
+
+JAANGAN LUPA TEST CASHISR LAGI
+
+LOGIN DULU!!!
+
+data akun:
+
+'email' = test@example.com,
+password = password
+
+'email' = cobacoba,
+password = cobacoba
+
+php artisan make:livewire CategoryTable
+php artisan livewire:form ComponentForm 
+
+php artisan livewire:publish --config
+
+composer require robsontenorio/mary
+
+php artisan mary:install
+ 
+php artisan make:volt index --class
+php artisan key:generate
+php artisan migrate:fresh --seed
+php artisan make:model Pembelian -mfsc
+php artisan make:model  -m
+php artisan make:migration 
+php artisan make:controller (nama_controller) --resource
+php artisan make:view components\
+php artisan make:request UserRequest
+
+$orders = Order::toBase()->get();
+$user = App\Models\User::all();
+$inv = App\Models\PurchaseInvoice::truncate();
+
+composer create-project laravel/laravel:^11.0 nama_folder
+
+laravel new example-app
+
+cd example-app
+npm install && npm run build
+composer run dev
+
+composer require --dev jn-jairo/laravel-ngrok
+
+composer require barryvdh/laravel-debugbar --dev
+
+composer require --dev laravel-lang/common
+
+composer require maatwebsite/excel
+
+php artisan lang:update
+
+php artisan view:clear
+php artisan config:clear
+php artisan cache:clear
+
+Tidak Ada Pemisah antara Satuan Mata Uang dengan Nominal
+
+Penulisan rupiah yang sesuai ditulis tanpa adanya spasi pemisah antara satuan mata uang (dalam hal ini rupiah) dengan nominalnya. Dengan demikian penulisan yang benar yakni "Rp100.000",

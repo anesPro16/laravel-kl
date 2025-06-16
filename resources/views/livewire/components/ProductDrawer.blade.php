@@ -7,7 +7,15 @@
                 <x-input label="Nama Produk" wire:model.blur="form.product_name" />
                 <x-input label="Kode Produk" wire:model="form.product_code" />
                 <x-input label="Barcode" wire:model="form.barcode" />
-                <x-input label="Nama Pabrik" wire:model="form.factory_name" />
+                <x-choices-offline
+                    label="Nama Pabrik"
+                    wire:model="form.supplier_id"
+                    :options="$suppliers"
+                    optionLabel="nama"
+                    placeholder="Search ..."
+                    single
+                    searchable />
+                {{-- <x-input label="Nama Pabrik" wire:model="form.factory_name" /> --}}
                 <x-choices-offline
                     label="Satuan"
                     wire:model="form.unit"

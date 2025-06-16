@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Inventory;
 use App\Models\PriceIncrease;
 use App\Models\Shelf;
 use App\Models\Supplier;
@@ -54,17 +55,27 @@ class DatabaseSeeder extends Seeder
             Unit::firstOrCreate(['unit_name' => $unit]);
         }
 
-        $this->call(ProductSeeder::class);
-
         for ($i = 0; $i < 20; ++$i) {
             Supplier::create([
-                'nama'    => fake()->name(),
+                'nama'    => fake()->company(),
                 'alamat'  => fake()->streetAddress(),
                 'no_telp' => fake()->phoneNumber(),
                 'email'   => fake()->unique()->safeEmail(),
             ]);
         }
         
+        $this->call(ProductSeeder::class);
+        
+        $inventories = [
+            ['inventory_name' => 'Etalase'],
+            ['inventory_name' => 'Gudanng 1'],
+            ['inventory_name' => 'Gudanng 2'],
+            ['inventory_name' => 'Gudanng 3'],
+            ['inventory_name' => 'Apotek lama'],
+        ];
+
+        Inventory::insert($inventories);
+
         /*$kenaikan = [
             ['type' => 'Klinik', 'price' => 0.15],
             ['type' => 'Bebas', 'price' => 0.2],

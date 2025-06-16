@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->ulid('id')->primary();
+            // $table->string('factory_name')->nullable();
+            $table->foreignId('supplier_id')->constrained()->cascadeOnDelete();
             $table->string('product_name')->nullable();
             $table->string('type');
             $table->string('product_code');
             $table->string('barcode');
-            $table->string('factory_name')->nullable();
             $table->string('unit');
             $table->integer('purchase_price');
             $table->integer('selling_price');

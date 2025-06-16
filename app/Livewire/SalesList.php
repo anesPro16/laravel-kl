@@ -18,6 +18,11 @@ class SalesList extends Component
 
     public $title ='Daftar Penjualan';
 
+    /*public function mount()
+    {
+        dd($this->headers());
+    }*/
+
     public function getSalesProperty()
     {
         // return $this->salesQuery('sold')->latest()->get();

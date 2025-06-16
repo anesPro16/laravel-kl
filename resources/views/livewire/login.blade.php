@@ -33,10 +33,11 @@ class extends Component {
  
             //return redirect()->intended('/');
             //$this->redirect('/', navigate: true);
-            $this->redirect('/cashier', navigate: true);
+            //$this->redirect('/cashier', navigate: true);
+            $this->redirect('/faktur', navigate: true);
         }
  
-        $this->addError('email', 'The provided credentials do not match our records.');
+        $this->addError('email', 'email tidak benar.');
     }
 }; ?>
 

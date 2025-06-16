@@ -21,7 +21,8 @@ class ComponentForm extends Form
 
     public string $barcode = '';
 
-    public string $factory_name = '';
+    // public string $factory_name = '';
+    public ?string $supplier_id = null;
 
     public string $unit = '';
 
@@ -51,13 +52,13 @@ class ComponentForm extends Form
             $this->product_code = $record->product_code ?? '';
         }
         $this->barcode = $record->barcode ?? '';
-        $this->factory_name = $record->factory_name ?? '';
+        $this->supplier_id = $record->supplier_id ?? '';
         $this->unit = $record->unit ?? '';
         $this->purchase_price = $record->purchase_price ?? null;
         $this->selling_price = $record->selling_price ?? null;
         $this->category = $record->category ?? '';
         $this->shelf = $record->shelf ?? '';
-        $this->stock = $record->stock ?? '';
+        $this->stock = $record->stok ?? '';
         $this->min_stock = $record->min_stock ?? '';
         $this->status = $record->status ?? 'Dijual';
     }
@@ -87,11 +88,11 @@ class ComponentForm extends Form
     public function save()
     {
         $this->validate([
+            'supplier_id' => 'required',
             'product_name' => 'required|unique:products,product_name,' . $this->record->id,
             'type' => 'required',
             'product_code' => 'required|unique:products,product_code,' . $this->record->id,
             'barcode' => 'required',
-            'factory_name' => 'required',
             'unit' => 'required',
             'purchase_price' => 'required|numeric|min:0',
             'selling_price' => 'required|numeric|min:0',
@@ -105,11 +106,11 @@ class ComponentForm extends Form
         Product::updateOrCreate(
             ['id' => $this->record->id ?: Str::ulid()],
             $this->only([
+                'supplier_id',
                 'product_name',
                 'type',
                 'product_code',
                 'barcode',
-                'factory_name',
                 'unit',
                 'purchase_price',
                 'selling_price',

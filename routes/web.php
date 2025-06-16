@@ -3,6 +3,7 @@
 use App\Livewire\{
 	Cashier,
   Categories,
+  CreateFaktur,
   ProductTable,
   PurchaseInvoices,
   RejectList,
@@ -29,6 +30,7 @@ Volt::route('/sales/receipt-pdf/{saleId}', 'pdf-struck')->name('export-pdf');
 
 
 Route::get('/sales/{sale}/export-pdf', [ReceiptPdfController::class, 'export'])->name('sales.export.pdf');
+Route::get('/invoice/{invoice}/faktur-pdf', [ReceiptPdfController::class, 'fakturPdf']);
 
 
 /*Route::get('/struk/{sale}/pdf', function (Sale $sale) {
@@ -47,8 +49,9 @@ Route::get('/logout', function () {
 
 Route::get('/cart', CartDrawer::class)->middleware('auth');
 Route::get('/produk', Products::class)->middleware('auth');
-Route::get('/cashier', Cashier::class)->middleware('auth');;
-Route::get('/faktur', PurchaseInvoices::class);
+Route::get('/cashier', Cashier::class)->middleware('auth');
+Route::get('/faktur', PurchaseInvoices::class)->middleware('auth');
+Route::get('/create-faktur', CreateFaktur::class)->middleware('auth');
 Route::get('/reject-list', RejectList::class);
 Route::get('/retur-list', ReturList::class);
 Route::get('/sale-list', SalesList::class);

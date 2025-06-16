@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Shelf;
+use App\Models\Supplier;
 use App\Models\Unit;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -49,7 +50,7 @@ class ProductSeeder extends Seeder
                 'type' => $tipe,
                 'product_code' => $kodeProduk,
                 'barcode' => $barcode,
-                'factory_name' => fake()->company(),
+                'supplier_id' => Supplier::inRandomOrder()->first()->id,
                 'unit' => Unit::inRandomOrder()->first()->unit_name,
                 'purchase_price' => $hargaBeli,
                 'selling_price' => $hargaJual,

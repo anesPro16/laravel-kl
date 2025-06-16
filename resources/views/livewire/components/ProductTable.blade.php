@@ -5,6 +5,10 @@
             {{ $loop->iteration }}
         @endscope
 
+        @scope('cell_supplier', $product)
+            {{ $product->supplier->nama }}
+        @endscope
+
         @scope('cell_action', $product)
             <div class="flex space-x-2">
                 <x-button icon="o-pencil" wire:click="showDrawer('{{ $product->id }}')" class="btn-ghost btn-sm text-blue-500" />

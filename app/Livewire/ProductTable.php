@@ -6,6 +6,7 @@ use App\Livewire\Forms\ComponentForm;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Shelf;
+use App\Models\Supplier;
 use App\Models\Unit;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -49,13 +50,13 @@ class ProductTable extends Component
       ['key' => 'type', 'label' => 'Tipe', 'class' => 'w-1'],
       ['key' => 'product_code', 'label' => 'Kode Produk', 'class' => 'w-1'],
       ['key' => 'barcode', 'label' => 'Barcode', 'class' => 'w-1'],
-      ['key' => 'factory_name', 'label' => 'Supplier', 'class' => 'w-1'],
+      ['key' => 'supplier', 'label' => 'Supplier', 'class' => 'w-1'],
       ['key' => 'unit', 'label' => 'Satuan', 'class' => 'w-1'],
       ['key' => 'purchase_price', 'label' => 'Harga Beli', 'class' => 'w-1'],
       ['key' => 'selling_price', 'label' => 'Harga Jual', 'class' => 'w-1'],
       ['key' => 'category', 'label' => 'Kategori', 'class' => 'w-1'],
       ['key' => 'shelf', 'label' => 'Rak', 'class' => 'w-1'],
-      ['key' => 'stock', 'label' => 'Stok', 'class' => 'w-1'],
+      ['key' => 'stok', 'label' => 'Stok', 'class' => 'w-1'],
       ['key' => 'min_stock', 'label' => 'Min Stok', 'class' => 'w-1'],
       ['key' => 'status', 'label' => 'Status', 'class' => 'w-1'],
       ['key' => 'action', 'label' => 'Aksi', 'class' => 'w-1'],
@@ -115,6 +116,7 @@ class ProductTable extends Component
       'statuses' => $this->statuses,
       'categories' => Category::all()->toArray(),
       'shelves' => Shelf::all()->toArray(),
+      'suppliers' => Supplier::select('id', 'nama')->get()->toArray(),
       'units' => Unit::all()->toArray(),
     ]);
   }

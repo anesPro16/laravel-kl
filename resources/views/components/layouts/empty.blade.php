@@ -15,5 +15,8 @@
             {{ $slot }}
         </x-slot:content>
     </x-main>
+
+    {{--  TOAST area --}}
+    <x-toast />
 </body>
 </html>
