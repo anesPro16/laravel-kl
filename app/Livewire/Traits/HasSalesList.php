@@ -17,6 +17,8 @@ trait HasSalesList
 	public bool $isRetur = false;
 
     public string $search = '';
+
+    public string $selectedRange = '';
 	
 
     public function headers(): array
@@ -50,6 +52,33 @@ trait HasSalesList
         $this->search = $value;
     }
 
+    public function updatedSelectedRange($value)
+    {
+        // $today = Carbon::now()->subDays(1)->translatedFormat('j F Y');
+        // $today = Carbon::yesterday()->translatedFormat('j F Y');
+        // $today = Carbon::tomorrow()->translatedFormat('j F Y');
+        // $today = Carbon::now()->dayOfWeek->translatedFormat('j F Y');
+        if ($value == 'Hari ini') {
+            $this->dateRangeLabel = now()->translatedFormat('j F Y');
+        } elseif ($value == 'Kemarin') {
+            $this->startDate = Carbon::yesterday()->translatedFormat('j F Y');
+            $this->endDate = Carbon::yesterday()->translatedFormat('j F Y');
+        } elseif ($value == 'Pekan ini') {
+            $this->startDate = Carbon::now()->startOfWeek()->translatedFormat('j F Y');
+            $this->endDate = Carbon::now()->endOfWeek()->translatedFormat('j F Y');
+        } elseif ($value == 'Bulan ini') {
+            $this->startDate = Carbon::now()->startOfMonth()->translatedFormat('j F Y');
+            $this->endDate = Carbon::now()->endOfMonth()->translatedFormat('j F Y');
+        } elseif ($value == 'Bulan lalu') {
+            $this->startDate = Carbon::now()->subMonthNoOverflow()->startOfMonth()->format('j F Y');
+            $this->endDate = Carbon::now()->subMonthNoOverflow()->endOfMonth()->format('j F Y');
+        }
+        else {
+            return false;
+        }
+
+    }
+
     public function getDateRangeLabelProperty(): string
     {
         if ($this->startDate || $this->endDate) {
@@ -64,8 +93,8 @@ trait HasSalesList
 
     public function getSalesSummaryProperty(): array
     {
-        $total = $this->sales->sum('grand_total');
-        $count = $this->sales->count();
+        $total = $this->sales->where('status', 'sold')->sum('grand_total');
+        $count = $this->sales->where('status', 'sold')->count();
 
         return [
             'total' => $total,
@@ -134,6 +163,7 @@ trait HasSalesList
         }
 
 
-        return $query->where('status', $status);
+        // return $query->where('status', $status);
+        return $query;
     }
 }

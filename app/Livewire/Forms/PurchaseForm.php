@@ -64,7 +64,7 @@ class PurchaseForm extends Form
     $this->no_surat_pesan = $record->no_surat_pesan ?? '';
     $this->no_faktur = $record->no_faktur ?? '';
     $this->tanggal =  ($record->tanggal) ? $record->tanggal->format('Y-m-d') : now()->format('Y-m-d');
-    $this->tgl_penerimaan =  ($record->tgl_penerimaan) ? $record->tgl_penerimaan->format('Y-m-d') : now()->format('Y-m-d');
+    $this->tgl_penerimaan =  ($record->tgl_penerimaan) ? $record->tgl_penerimaan->format('Y-m-d') : now()->format('Y-m-d H:i');
     $this->jenis_faktur = $record->jenis_faktur ?? 'Harga Belum termasuk Pajak';
     $this->jenis_pembayaran = $record->jenis_pembayaran ?? 'Kredit';
     $this->tempo_bayar = $record->tempo_bayar ?? '0';

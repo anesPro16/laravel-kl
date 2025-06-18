@@ -3,6 +3,7 @@
 use App\Livewire\{
 	Cashier,
   Categories,
+  Common,
   CreateFaktur,
   ProductTable,
   PurchaseInvoices,
@@ -56,6 +57,7 @@ Route::get('/reject-list', RejectList::class);
 Route::get('/retur-list', ReturList::class);
 Route::get('/sale-list', SalesList::class);
 Route::get('/category', Categories::class);
+Route::get('/umum', Common::class);
 Route::get('/product', ProductTable::class);
 Route::get('/rak', Shelves::class);
 Route::get('/unit', Units::class);

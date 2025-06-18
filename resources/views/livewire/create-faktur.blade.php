@@ -1,3 +1,4 @@
+
 <div>
 	<x-theme-toggle class="btn btn-circle btn-ghost" />
 	<x-form wire:submit.prevent="save">
@@ -31,7 +32,7 @@
 					</div>
 
 					<div class="basis-1/6">
-						<x-datetime label="Tanggal Penerimaan" wire:model.defer="form.tgl_penerimaan" />
+						<x-datetime label="Tanggal Penerimaan" wire:model.defer="form.tgl_penerimaan" type="datetime-local" />
 					</div>
 
 					<div class="basis-1/4">
@@ -62,7 +63,6 @@
 					</div>
 					<x-slot:actions>
 						<x-button class="btn-primary" type="submit" label="Simpan" />
-						<x-button label="Reset" icon="o-x-mark" wire:click="clear" />
 				</x-slot:actions>
 			</div>
 		{{-- </x-form> --}}
@@ -88,16 +88,27 @@
       @endscope
 
       @scope('cell_expired', $item)
-        {{-- {{ $item->product->product_name }} --}}
-        <x-datetime wire:model.live.debounce.350ms="expired" />
-      @endscope
+        @php
+            // $expDate = $item->expired ?? now()->format('Y-m-d H:i:s');
+            $expDate = $item->expired ?? now()->format('Y-m-d');
+        @endphp
+        <div x-data="{ expired: '{{ $expDate }}' }">
+            <x-datetime 
+                label="Kadaluarsa"
+                x-model="expired"
+                x-on:change="$wire.updateExpired({{ $item->id }}, expired)"
+                class="w-40"
+            />
+
+        </div>
+    @endscope
+      
       @scope('cell_quantity', $item)
         <div x-data="{ qty: {{$item->quantity}} }">
          {{-- <button x-show="qty > 1" x-on:click="$wire.updateQuantity({{ $item->id }}, qty - 1); qty--" icon="o-minus">-</button> --}}
           <input
             type="number"
             min="1"
-            max="{{ $item->product->stock }}"
             x-model.number="qty"
             x-on:blur="$wire.$refresh()"
             x-on:change="$wire.updateQuantity({{ $item->id }}, qty);"
@@ -175,15 +186,18 @@
 		  </div>
 			
 			
-		  <div x-data="{ discount_faktur: {{$discount_faktur}} }">
-		  	<label id="diskon">Diskon : </label>
-      	<x-input 
-      		class="w-1" 
-      		type="number"
-      		min="0"
-   				max="100"
-      		wire:model.defer="form.discount"
-    			x-on:change="$wire.updateDiscountFaktur($event.target.value)" />%
+		  <div class="flex justify-start gap-6 w-full" x-data="{ discount_faktur: {{$discount_faktur}} }">
+		  	<label id="diskon">Diskon</label>
+		  	<div class="flex items-center">
+	      	<x-input 
+	      		class="flex-initial inline text-right"
+	      		type="number"
+	      		min="0"
+	   				max="100"
+	      		wire:model.defer="form.discount"
+	    			x-on:change="$wire.updateDiscountFaktur($event.target.value)" />
+	    			<span>%</span>
+		  	</div>
       </div>
 
       <div x-data="{ ppn: {{$summary['ppn']}} }">

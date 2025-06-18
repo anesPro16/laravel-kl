@@ -112,13 +112,14 @@
           <input
             type="number"
             min="1"
-            max="{{ $item->product->stock }}"
+            {{-- max="{{ $item->product->stock }}" --}}
+            max="{{ $item->product->stok }}"
             x-model.number="qty"
             x-on:blur="$wire.$refresh()"
             x-on:change="$wire.updateQuantity({{ $item->id }}, qty);"
             class="w-12 text-center border border-gray-300 rounded"
         />
-         <button x-show="qty < {{ $item->product->stock }}" x-on:click="$wire.updateQuantity({{ $item->id }}, qty + 1); qty++" icon="o-plus">+</button>
+         <button x-show="qty < {{ $item->product->stok }}" x-on:click="$wire.updateQuantity({{ $item->id }}, qty + 1); qty++" icon="o-plus">+</button>
         </div>
       @endscope
 

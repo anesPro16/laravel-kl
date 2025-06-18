@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Cart;
+use App\Models\CartItem;
 use App\Models\Product;
 use App\Services\CartService;
 use App\Services\CheckoutService;
@@ -109,6 +110,12 @@ class Cashier extends Component
     public function updateQuantity($cartItemId, $quantity)
     {
         app(CartService::class)->updateQuantity($cartItemId, $quantity, $this->cart);
+        $item = CartItem::with('product')->findOrFail($cartItemId);
+        if ($item->quantity < $quantity) {
+            $this->error('Stok Barang Kurang!', timeout: 5000);
+            $this->qty = $item->quantity - 1;
+        }
+
         $this->loadCart(app(CartService::class));
     }
 

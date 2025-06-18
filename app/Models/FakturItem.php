@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Faktur;
 use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class FakturItem extends Model
@@ -20,4 +21,8 @@ class FakturItem extends Model
 	  return $this->belongsTo(Product::class);
 	}
 
+	/*public function getExpDateAttribute()
+  {
+     return Carbon::parse($this->expired)->format('Y-m-d');
+  }*/
 }

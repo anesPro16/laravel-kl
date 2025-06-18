@@ -122,10 +122,20 @@ class CartService
 
         if ($item->cart_id !== $cart->id) abort(403);
 
-        $stock = $item->product->stock;
+        // $stock = $item->product->stock;
+        $stock = $item->product->stok;
         $quantity = max(1, min((int)$quantity, $stock));
 
         $item->update(['quantity' => $quantity]);
+    }
+
+    public function updateExpiredFaktur($fakturItemId, $expired, $faktur)
+    {
+        $item = FakturItem::with('product')->findOrFail($fakturItemId);
+
+        if ($item->faktur_id !== $faktur->id) abort(403);
+
+        $item->update(['expired' => $expired]);
     }
 
     public function updateQtyFaktur($cartItemId, $quantity, $faktur)

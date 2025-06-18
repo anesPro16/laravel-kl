@@ -24,6 +24,7 @@ trait HasFakturList
         return [
             ['key' => 'index', 'label' => 'No.', 'class' => 'w-1'],
             ['key' => 'tanggal', 'label' => 'Tanggal', 'class' => 'w-1 hidden md:table-cell'],
+            ['key' => 'no_faktur', 'label' => 'No. Faktur', 'class' => 'w-1 text-center hidden md:table-cell'],
             ['key' => 'supplier', 'label' => 'Supplier', 'class' => 'w-1'],
             ['key' => 'product', 'label' => 'Produk', 'class' => 'w-1'],
             ['key' => 'status', 'label' => 'Status', 'class' => 'w-1'],
@@ -51,8 +52,8 @@ trait HasFakturList
 
     public function getinvoicesSummaryProperty(): array
     {
-        $total = $this->invoices->sum('grand_total');
-        $count = $this->invoices->count();
+        $total = $this->invoices->where('status', 'process')->sum('grand_total');
+        $count = $this->invoices->where('status', 'process')->count();
 
         return [
             'total' => $total,
@@ -104,7 +105,10 @@ trait HasFakturList
             ]);
         } else {
             $today = Carbon::today();
+            // $query->whereDate('created_at', $today);
+            if ($status == 'process') {
                 $query->whereDate('created_at', $today);                
+            }                
         }
         // ⬇️ Tambahkan pencarian berdasarkan nama produk
         if (!empty($this->search)) {
@@ -116,6 +120,7 @@ trait HasFakturList
         }
 
 
-        return $query->where('status', $status);
+        // return $query->where('status', $status);
+        return $query;
     }
 }

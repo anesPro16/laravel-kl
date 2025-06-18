@@ -32,7 +32,8 @@ class CheckoutService
 					'subtotal'     => $item->quantity * $item->price_at_time,
 				]);
 
-				$product?->decrement('stock', $item->quantity);
+				// $product?->decrement('stock', $item->quantity);
+				$product->update(['stock' => $product->stok - $item->quantity]);
 			}
 
 			$cart->items()->delete();

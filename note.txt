@@ -1,3 +1,9 @@
+Saya seorang web developer, 
+berikut code  
+Dapatkah Anda memperbaiki code  
+
+Tuliskan code secara clean code
+
 cd htdocs\Laravell\laravel_kl
 
 ngrok config add-authtoken 2g0IbzVHDHIVaDmX8t8uk6vTE3I_4nG3ZH6tXNJEzwkmEw9w4

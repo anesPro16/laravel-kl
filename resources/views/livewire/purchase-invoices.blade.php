@@ -19,15 +19,24 @@
 		<x-table :headers="$headers" :rows="$invoices" containerClass>
 
 			@scope('cell_index', $invoice)
-			{{ $loop->iteration }}
+				{{ $loop->iteration }}
+			@endscope
+
+			@scope('cell_no_faktur', $invoice)
+			<span class="{{ ($invoice->status == 'reject' || $invoice->status == 'retur') ? 'line-through text-xs text-red-500' : '' }}">
+				{{ str_pad($invoice->no_faktur, 2, '0', STR_PAD_LEFT) }} <br>
+			</span>
+				<span class="{{ ($invoice->status == 'reject') ? 'text-xs text-red-500' : '' }}">
+					{{ ($invoice->status == 'reject') ? 'Dibatalkan pada ' . $invoice->updated_at->translatedFormat('j F Y') . ' Oleh '. $invoice->user->name : '' }}
+				</span>
 			@endscope
 
 			@scope('cell_supplier', $invoice)
-			{{ $invoice->supplier->nama }}
+				{{ $invoice->supplier->nama }}
 			@endscope
 
 			@scope('cell_tanggal', $invoice)
-			{{ $invoice->tanggal->format('d-m-Y') }}
+				{{ $invoice->tanggal->format('d-m-Y') }}
 			@endscope
 
 			@scope('cell_product', $invoice)
@@ -38,13 +47,19 @@
             $unit = $items->first()?->product->unit ?? '-';
             $productCount = $items->count();
         @endphp
-        <span class="{{ ($invoice->status != 'process') ? 'text-red-500' : ''}}">
+        <span class="{{ ($invoice->status != 'process') ? 'line-through text-red-500' : ''}}">
         	{{ $qty }} {{ $unit . ' x'}} {{ $firstProduct }}
         </span>
         @if ($productCount > 1)
             <x-badge value="+ {{ $productCount - 1 }} lainnya" class="badge-info text-sm mx-3" />
         @endif
   		  @endscope
+				
+				@scope('cell_grand_total', $invoice)
+				<span class="{{ ($invoice->status != 'process') ? 'line-through text-red-500' : ''}}">
+					{{ number_format($invoice->grand_total, 0, ',', '.') }}
+				</span>
+				@endscope
 
 				@scope('cell_action', $invoice)
 					<div class="flex space-x-1">
@@ -53,11 +68,12 @@
               <x-slot:trigger>
                   <x-button icon="o-ellipsis-vertical"/>
               </x-slot:trigger>
-              {{-- <x-menu-item title="Export Pdf" link="{{ route('sales.export.pdf', $invoice->id) }}" external /> --}}
+              @if($invoice->status == 'process')
+	              <x-menu-item title="Retur" wire:click="retur({{ $invoice->id }})"/>
+	              <x-menu-item title="Batalkan" wire:click="reject({{ $invoice->id }})"/>
+              @endif
               <x-menu-item title="Export Pdf" onclick="exportPDF({{ $invoice->id }})" external />
               <x-menu-item title="Buat Ulang" wire:click="ulang({{ $invoice->id }})" />
-              <x-menu-item title="Retur" wire:click="retur({{ $invoice->id }})"/>
-              <x-menu-item title="Batalkan" wire:click="reject({{ $invoice->id }})"/>
           </x-dropdown>
 					</div>
 				@endscope
@@ -246,15 +262,22 @@
 		    >
 		  </div>
 
-		  <div x-data="{ discount_faktur: {{$discount_faktur}} }">
-		  	<label id="diskon">Diskon : </label>
-      	<x-input 
-      		class="w-1" type="number"
-      		x-model.number="discount_faktur"
-      		x-bind:readonly="readonly"
-          x-on:blur="$wire.$refresh()"
-	        x-on:change="$wire.updateDiscountFaktur(discount_faktur);" 
-      		wire:model.defer="form.discount" />%
+      <div class="flex justify-start gap-6 w-full" x-data="{ discount_faktur: {{$discount_faktur}} }">
+		  	<label id="diskon">Diskon</label>
+		  	<div class="flex items-center">
+	      	<x-input 
+	      		class="flex-initial inline text-right"
+	      		type="number"
+	      		min="0"
+	   				max="100"
+	   				x-model.number="discount_faktur"
+	      		x-bind:readonly="readonly"
+	          x-on:blur="$wire.$refresh()"
+	   				x-bind:readonly="readonly"
+	      		wire:model.defer="form.discount"
+	    			x-on:change="$wire.updateDiscountFaktur($event.target.value)" />
+	    			<span>%</span>
+		  	</div>
       </div>
 
 		  <div x-data="{ ppn: {{$summary['ppn']}} }">

@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\PurchaseInvoice;
 use App\Models\Supplier;
 use App\Services\CartService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -26,7 +27,7 @@ class CreateFaktur extends Component
 
     public bool $showingForm = false;
     public bool $editing = false;
-    public string $expired = '';
+    // public string $expired = '';
     public float $discount =0;
     public int $discount_faktur = 0;
     public string $discount_type = '%';
@@ -51,7 +52,7 @@ class CreateFaktur extends Component
     public function mount(PurchaseInvoice $invoice = null, CartService $cartService)
     {
     	$this->discount_faktur = $invoice->discount ?? 0;
-    	$this->expired = now()->format('Y-m-d');
+    	// $this->expired = now()->format('Y-m-d');
         $this->loadCart($cartService);
         
         /*$item = FakturItem::find($this->faktur->id);
@@ -105,8 +106,26 @@ class CreateFaktur extends Component
         $this->loadCart($cartService);
     }
 
+    public function updateExpired($fakturItemId, $expired)
+    {
+        // Validasi: tanggal expired tidak boleh di masa lalu
+        if (Carbon::parse($expired)->lt(now()->startOfDay())) {
+            // $this->addError("expired_{$fakturItemId}", '');
+            $this->error('Waktu kadaluarsa sudah berlalu!', timeout: 5000);
+            return;
+        }
+        app(CartService::class)->updateExpiredFaktur($fakturItemId, $expired, $this->faktur);
+        $this->loadCart(app(CartService::class));
+        $this->getFakturSummary();
+    }
+
     public function updateQuantity($cartItemId, $quantity)
     {
+        if ($quantity == null) {
+            $this->error('Kuantitas kosong!', timeout: 5000);
+            $quantity = 1;
+            // return;
+        }
         app(CartService::class)->updateQtyFaktur($cartItemId, $quantity, $this->faktur);
         $this->loadCart(app(CartService::class));
         $this->getFakturSummary();
